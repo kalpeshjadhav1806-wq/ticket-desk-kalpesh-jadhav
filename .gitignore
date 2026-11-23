@@ -1,0 +1,13 @@
+# Local development configuration
+**/appsettings.Development.json
+
+# Build files
+**/bin/
+**/obj/
+
+# Visual Studio files
+.vs/
+
+# Visual Studio user settings
+*.csproj.user
+*.user
