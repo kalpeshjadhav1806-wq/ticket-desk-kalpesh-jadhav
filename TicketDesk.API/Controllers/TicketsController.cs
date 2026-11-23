@@ -18,7 +18,7 @@ namespace TicketDesk.API.Controllers
             _ticketService = ticketService;
         }
 
-        // Employee creates a new support ticket.
+      
         [HttpPost]
         public async Task<IActionResult> CreateTicket(
             CreateTicketDto request)

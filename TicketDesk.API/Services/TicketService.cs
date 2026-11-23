@@ -14,7 +14,7 @@ namespace TicketDesk.API.Services
             _context = context;
         }
 
-        // Create a new ticket for an employee.
+       
         public async Task<SupportTicket> CreateTicketAsync(
             CreateTicketDto request, int employeeId)
         {
@@ -33,7 +33,7 @@ namespace TicketDesk.API.Services
 
             await _context.SaveChangesAsync();
 
-            // Record initial ticket status.
+          
             var history = new TicketStatusHistory
             {
                 TicketId = ticket.Id,
@@ -50,7 +50,7 @@ namespace TicketDesk.API.Services
             return ticket;
         }
 
-        // Get tickets created by a particular employee.
+       
         public async Task<List<SupportTicket>> GetMyTicketsAsync(
             int employeeId)
         {
@@ -80,14 +80,14 @@ namespace TicketDesk.API.Services
                 .ToListAsync();
         }
     
-    // Agent picks up an available ticket.
+ 
 public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             var currentTime = DateTime.UtcNow;
 
-            // Atomically assign the ticket only if it is still available.
+           
             var updatedRows = await _context.SupportTickets
                 .Where(t => t.Id == ticketId
                             && t.Status == "Open"
@@ -97,14 +97,14 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
                     .SetProperty(t => t.Status, "InProgress")
                     .SetProperty(t => t.UpdatedAt, currentTime));
 
-            // Another agent may have already picked up this ticket.
+         
             if (updatedRows == 0)
             {
                 await transaction.RollbackAsync();
                 return false;
             }
 
-            // Record the status change.
+           
             var history = new TicketStatusHistory
             {
                 TicketId = ticketId,
@@ -131,7 +131,7 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
                     t.AssignedTo == agentId &&
                     t.Status == "InProgress");
 
-            // Check whether the ticket belongs to this agent.
+       
             if (ticket == null)
             {
                 return false;
@@ -139,11 +139,11 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
 
             var currentTime = DateTime.UtcNow;
 
-            // Update ticket status.
+
             ticket.Status = "Resolved";
             ticket.UpdatedAt = currentTime;
 
-            // Record status history.
+          
             var history = new TicketStatusHistory
             {
                 TicketId = ticketId,
@@ -161,10 +161,10 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
             return true;
         }
 
-        // Get ticket summary for the Manager dashboard.
+       
         public async Task<object> GetManagerSummaryAsync()
         {
-            // Count tickets by status.
+         
             var openCount = await _context.SupportTickets
                 .CountAsync(t => t.Status == "Open");
 
@@ -177,7 +177,7 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
             var closedCount = await _context.SupportTickets
                 .CountAsync(t => t.Status == "Closed");
 
-            // Find tickets older than 48 hours that are not resolved or closed.
+          
             var overdueDate = DateTime.UtcNow.AddHours(-48);
 
             var overdueCount = await _context.SupportTickets
@@ -201,7 +201,7 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
                 OverdueTickets = overdueCount
             };
         }
-        // Get status change history for a ticket.
+     
         public async Task<object> GetTicketHistoryAsync(int ticketId)
         {
             var history = await _context.TicketStatusHistories
@@ -222,7 +222,7 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
             return history;
         }
 
-        // Reopen a closed ticket within 7 days.
+      
         public async Task<bool> ReopenTicketAsync(int ticketId, int managerId)
         {
             var ticket = await _context.SupportTickets
@@ -231,11 +231,11 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
             if (ticket == null)
                 return false;
 
-            // Only closed tickets can be reopened.
+         
             if (ticket.Status != "Closed" || ticket.ClosedAt == null)
                 return false;
 
-            // Allow reopening only within 7 days of closure.
+      
             if (ticket.ClosedAt < DateTime.UtcNow.AddDays(-7))
                 return false;
 
@@ -257,8 +257,7 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
             return true;
         }
 
-        // Close a resolved ticket.
-        // Employee can close only their own resolved ticket.
+      
         public async Task<bool> CloseTicketAsync(int ticketId, int employeeId)
         {
             var ticket = await _context.SupportTickets
@@ -287,7 +286,7 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
             return true;
         }
 
-        // Get tickets with filtering and pagination.
+
         public async Task<object> GetTicketsAsync(
             string role,
             int userId,
@@ -298,19 +297,19 @@ public async Task<bool> PickUpTicketAsync(int ticketId, int agentId)
         {
             var query = _context.SupportTickets.AsQueryable();
 
-            // Employee can see only their own tickets.
+     
             if (role == "Employee")
             {
                 query = query.Where(t => t.CreatedBy == userId);
             }
 
-            // Filter by status.
+  
             if (!string.IsNullOrEmpty(status))
             {
                 query = query.Where(t => t.Status == status);
             }
 
-            // Filter by priority.
+       
             if (!string.IsNullOrEmpty(priority))
             {
                 query = query.Where(t => t.Priority == priority);

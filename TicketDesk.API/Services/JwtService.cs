@@ -44,4 +44,4 @@ namespace TicketDesk.API.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-}
+} 

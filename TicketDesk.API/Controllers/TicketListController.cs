@@ -17,7 +17,7 @@ namespace TicketDesk.API.Controllers
             _ticketService = ticketService;
         }
 
-        // Get tickets with filtering and pagination.
+     
         [HttpGet]
         public async Task<IActionResult> GetTickets(
             string? status,

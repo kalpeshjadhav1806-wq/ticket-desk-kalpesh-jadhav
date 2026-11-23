@@ -30,7 +30,7 @@ namespace TicketDesk.API.Data
                 CreatedAt = DateTime.UtcNow
             },
             new ApplicationUser
-            {
+            { 
                 FullName = "Test Manager",
                 Username = "manager",
                 Role = "Manager",

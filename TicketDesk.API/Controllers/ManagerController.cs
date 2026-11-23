@@ -17,7 +17,7 @@ namespace TicketDesk.API.Controllers
             _ticketService = ticketService;
         }
 
-        // Get ticket summary for Manager dashboard.
+     
         [HttpGet("summary")]
         public async Task<IActionResult> GetSummary()
         {
@@ -25,7 +25,7 @@ namespace TicketDesk.API.Controllers
 
             return Ok(summary);
         }
-        // Get audit history of a ticket.
+ 
         [HttpGet("tickets/{ticketId}/history")]
         public async Task<IActionResult> GetTicketHistory(int ticketId)
         {
@@ -34,7 +34,7 @@ namespace TicketDesk.API.Controllers
             return Ok(history);
         }
 
-        // Reopen a closed ticket.
+  
         [HttpPut("tickets/{ticketId}/reopen")]
         public async Task<IActionResult> ReopenTicket(int ticketId)
         {

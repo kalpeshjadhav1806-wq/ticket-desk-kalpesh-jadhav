@@ -17,7 +17,7 @@ namespace TicketDesk.API.Controllers
             _ticketService = ticketService;
         }
 
-        // Get all available tickets for agents.
+       
         [HttpGet("available-tickets")]
         public async Task<IActionResult> GetAvailableTickets()
         {
@@ -52,7 +52,7 @@ namespace TicketDesk.API.Controllers
                 ticketId = ticketId
             });
         }
-        // Agent resolves an assigned ticket.
+     
         [HttpPut("tickets/{ticketId}/resolve")]
         public async Task<IActionResult> ResolveTicket(
             int ticketId, UpdateTicketStatusDto request)
